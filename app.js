@@ -73,8 +73,15 @@ async function searchGm() {
     });
     const url = `${CONFIG.API_URL}?${params.toString()}`;
     
+    console.log("=== ОТЛАДКА ПОИСКА ===");
+    console.log("URL запроса:", url);
+    console.log("Параметры:", Object.fromEntries(params));
+    
     const response = await fetch(url, { method: 'GET' });
     const data = await response.json();
+
+    console.log("Ответ сервера:", data);
+    console.log("======================");
 
     if (data.ok) {
       resultText.innerHTML = formatText(data.result?.text || "📊 Ответ получен");
