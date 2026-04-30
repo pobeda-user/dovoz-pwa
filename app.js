@@ -60,7 +60,6 @@ async function searchGm() {
     return;
   }
 
-  checkCityConsistency(gmNumber);
   showLoading(true);
   resultText.textContent = "⏳ Ищем в базе данных...";
 
@@ -73,15 +72,8 @@ async function searchGm() {
     });
     const url = `${CONFIG.API_URL}?${params.toString()}`;
     
-    console.log("=== ОТЛАДКА ПОИСКА ===");
-    console.log("URL запроса:", url);
-    console.log("Параметры:", Object.fromEntries(params));
-    
     const response = await fetch(url, { method: 'GET' });
     const data = await response.json();
-
-    console.log("Ответ сервера:", data);
-    console.log("======================");
 
     if (data.ok) {
       const res = data.result;
@@ -91,6 +83,7 @@ async function searchGm() {
           <div class="wrong-city-box">
             <p>${formatText(res.text)}</p>
             <button class="switch-city-btn" onclick="selectCity('${res.correctCity}', '${res.correctCityName}')">
+              <span class="material-icons">swap_horiz</span>
               ПЕРЕЙТИ В РЦ ${res.correctCityName.toUpperCase()}
             </button>
           </div>
