@@ -84,7 +84,20 @@ async function searchGm() {
     console.log("======================");
 
     if (data.ok) {
-      resultText.innerHTML = formatText(data.result?.text || "📊 Ответ получен");
+      const res = data.result;
+      if (!res.found && res.correctCity) {
+        // Если ГМ от другого города, предлагаем переключиться
+        resultText.innerHTML = `
+          <div class="wrong-city-box">
+            <p>${formatText(res.text)}</p>
+            <button class="switch-city-btn" onclick="selectCity('${res.correctCity}', '${res.correctCityName}')">
+              ПЕРЕЙТИ В РЦ ${res.correctCityName.toUpperCase()}
+            </button>
+          </div>
+        `;
+      } else {
+        resultText.innerHTML = formatText(res.text || "📊 Ответ получен");
+      }
     } else {
       resultText.textContent = `❌ Ошибка: ${data.error || "Неизвестная ошибка"}`;
     }
