@@ -3,7 +3,7 @@ const CONFIG = {
   // ⚠️ ЗАМЕНИТЕ ЭТОТ URL НА ВАШ НОВЫЙ ИЗ НОВОГО СКРИПТА
   API_URL: "https://script.google.com/macros/s/AKfycbzkLbw9dekhpuQsctrdTRkMitrNhSsg7bqDRpSYnhcPqScLlhRzisoTcx1p8ECbzUTF/exec",
   SHEET_IDS: {
-    "ULN": "1wX3MOY3OMFl1sTZCKyZvusjnpnjn8dn9VLKUBkjJ9w",
+    "ULN": "1wX3MOY3OMFl1sTZCKyZvusjnpnjn8dn9VLKUBkqjJ9w",
     "VRN": "1Ai820refQUAqUjNbfrv5ZUTP1pQqY3-MFqyF92U-a2A",
     "SMR": "1iEUoKlBXm7Nm3ixaDEQ8HFLcVh0hbfaL2Kwjxh25Uc0",
     "KRD": "1TyyLWAlbY8ohpmgdBbIi1iXZCTkxwm4psQdSpNu1iaI",
