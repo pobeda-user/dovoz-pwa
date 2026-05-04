@@ -334,6 +334,24 @@ h1 {
     opacity: 1;
 }
 
+.cache-reset-btn {
+    position: fixed;
+    right: 6px;
+    bottom: 6px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    opacity: 0.01;
+    z-index: 2000;
+}
+
+.cache-reset-btn:active {
+    opacity: 0.08;
+}
+
 /* Массовый поиск ГМ */
 .bulk-entry {
     margin-top: 10px;

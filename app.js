@@ -324,10 +324,31 @@ function showLoading(show) {
   loadingElement.classList.toggle('active', show);
 }
 
-function showToast(message, duration = 3000) {
+function showToast(message) {
   toast.textContent = message;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+async function hardResetCacheAndReload() {
+  try {
+    showToast('Сброс кеша...');
+
+    if (typeof caches !== 'undefined' && caches.keys) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+
+    try { localStorage.clear(); } catch (_) {}
+    try { sessionStorage.clear(); } catch (_) {}
+  } finally {
+    location.reload();
+  }
 }
 
 function showHelp() {
@@ -381,6 +402,30 @@ if (bulkGmTextarea) {
 
 // === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {
+  const cacheResetBtn = document.getElementById('cacheResetBtn');
+  if (cacheResetBtn) {
+    let pressTimer = null;
+    const startPress = () => {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = setTimeout(() => {
+        pressTimer = null;
+        hardResetCacheAndReload();
+      }, 1200);
+    };
+    const endPress = () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    };
+
+    cacheResetBtn.addEventListener('pointerdown', startPress);
+    cacheResetBtn.addEventListener('pointerup', endPress);
+    cacheResetBtn.addEventListener('pointercancel', endPress);
+    cacheResetBtn.addEventListener('pointerleave', endPress);
+    cacheResetBtn.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
       .then(() => console.log('✅ Service Worker зарегистрирован'))
