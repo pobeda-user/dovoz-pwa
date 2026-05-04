@@ -39,11 +39,18 @@ function selectBulkCity(cityCode, cityName) {
   bulkCurrentCityElement.textContent = `РЦ: ${cityName}`;
   bulkCitySelectionScreen.classList.remove('active');
   bulkSearchScreen.classList.add('active');
-  bulkResultText.innerHTML = `📦 Массовый поиск ГМ: <strong>${cityName}</strong><br><br>
+  if (cityCode === 'ALL') {
+    bulkResultText.innerHTML = `📦 Массовый поиск: <strong>ВСЕ РЦ</strong><br><br>
+                                Поиск по всем городам займет больше времени.<br>
+                                Мы проверим до 10 ГМ в каждой таблице.<br><br>
+                                <small>Только цифры</small>`;
+  } else {
+    bulkResultText.innerHTML = `📦 Массовый поиск ГМ: <strong>${cityName}</strong><br><br>
                               Вставьте до 10 номеров (Enter/запятая)<br>
                               или заполните поля ниже.<br><br>
                               <small>Только цифры</small>`;
-  showToast(`Выбран РЦ: ${cityName}`);
+  }
+  showToast(`Выбран режим: ${cityName}`);
 }
 
 function parseBulkGmListFromUi() {
@@ -191,12 +198,20 @@ function selectCity(cityCode, cityName) {
   currentCityElement.textContent = `РЦ: ${cityName}`;
   citySelectionScreen.classList.remove('active');
   searchScreen.classList.add('active');
-  resultText.innerHTML = `🔍 Поиск довозов: <strong>${cityName}</strong><br><br>
+  if (cityCode === 'ALL') {
+    resultText.innerHTML = `🔍 Поиск по <strong>ВСЕМ РЦ</strong><br><br>
+                            Это может занять немного больше времени (до 10-15 сек).<br>
+                            Мы проверим все таблицы по очереди.<br><br>
+                            Введите номер ГМ<br><br>
+                            Пример: 112472979`;
+  } else {
+    resultText.innerHTML = `🔍 Поиск довозов: <strong>${cityName}</strong><br><br>
                           Введите номер ГМ для поиска<br>
                           (только цифры, без букв и символов)<br><br>
                           Пример: 112472979<br><br>
                           <small>Номер ГМ содержит только цифры</small>`;
-  showToast(`Выбран РЦ: ${cityName}`);
+  }
+  showToast(`Выбран режим: ${cityName}`);
 }
 
 // === НАЗАД К ВЫБОРУ ГОРОДА ===

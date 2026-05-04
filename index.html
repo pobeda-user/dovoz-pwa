@@ -28,6 +28,11 @@
             <p class="subtitle">Выберите свой Логистический центр:</p>
             
             <div class="city-buttons">
+                <button class="city-btn all-rc" onclick="selectCity('ALL', 'ВСЕ РЦ')">
+                    <span class="city-name">🔍 ПО ВСЕМ РЦ</span>
+                    <span class="city-code">(поиск во всех таблицах)</span>
+                </button>
+                
                 <button class="city-btn green" onclick="selectCity('ULN', 'Ульяновск')">
                     <span class="city-name">УЛЬЯНОВСК</span>
                     <span class="city-code">(ГМ: 1,2,4,9)</span>
@@ -140,6 +145,11 @@
             <p class="subtitle">Выберите РЦ, где искать:</p>
 
             <div class="city-buttons">
+                <button class="city-btn all-rc" onclick="selectBulkCity('ALL', 'ВСЕ РЦ')">
+                    <span class="city-name">🔍 ПО ВСЕМ РЦ</span>
+                    <span class="city-code">(поиск во всех таблицах)</span>
+                </button>
+
                 <button class="city-btn green" onclick="selectBulkCity('ULN', 'Ульяновск')">
                     <span class="city-name">УЛЬЯНОВСК</span>
                     <span class="city-code">(ГМ: 1,2,4,9)</span>
