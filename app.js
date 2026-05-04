@@ -347,7 +347,9 @@ async function hardResetCacheAndReload() {
     try { localStorage.clear(); } catch (_) {}
     try { sessionStorage.clear(); } catch (_) {}
   } finally {
-    location.reload();
+    const url = new URL(location.href);
+    url.searchParams.set('t', String(Date.now()));
+    location.replace(url.toString());
   }
 }
 
@@ -404,25 +406,10 @@ if (bulkGmTextarea) {
 document.addEventListener('DOMContentLoaded', () => {
   const cacheResetBtn = document.getElementById('cacheResetBtn');
   if (cacheResetBtn) {
-    let pressTimer = null;
-    const startPress = () => {
-      if (pressTimer) clearTimeout(pressTimer);
-      pressTimer = setTimeout(() => {
-        pressTimer = null;
-        hardResetCacheAndReload();
-      }, 1200);
-    };
-    const endPress = () => {
-      if (pressTimer) {
-        clearTimeout(pressTimer);
-        pressTimer = null;
-      }
-    };
-
-    cacheResetBtn.addEventListener('pointerdown', startPress);
-    cacheResetBtn.addEventListener('pointerup', endPress);
-    cacheResetBtn.addEventListener('pointercancel', endPress);
-    cacheResetBtn.addEventListener('pointerleave', endPress);
+    cacheResetBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      hardResetCacheAndReload();
+    });
     cacheResetBtn.addEventListener('contextmenu', (e) => e.preventDefault());
   }
 
@@ -433,13 +420,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Базовое состояние навигации, чтобы системная кнопка "Назад" работала внутри PWA
+  // Делаем "sentry"-шаг истории: на главном экране назад не закрывает PWA, а остается в приложении
   if (!history.state || !history.state.screen) {
     history.replaceState({ screen: 'main' }, '');
+    history.pushState({ screen: '__guard__' }, '');
+  } else if (history.state.screen !== '__guard__') {
+    history.pushState({ screen: '__guard__' }, '');
   }
-  applyNavState(history.state);
+
+  applyNavState({ screen: 'main' });
 
   window.addEventListener('popstate', (e) => {
-    applyNavState(e.state);
+    const st = e.state;
+    if (st && st.screen === '__guard__') {
+      history.pushState({ screen: '__guard__' }, '');
+      applyNavState({ screen: 'main' });
+      return;
+    }
+    applyNavState(st);
   });
 
   gmInput.focus();

@@ -336,20 +336,24 @@ h1 {
 
 .cache-reset-btn {
     position: fixed;
-    right: 6px;
-    bottom: 6px;
-    width: 22px;
-    height: 22px;
+    right: 14px;
+    bottom: 14px;
+    width: 44px;
+    height: 44px;
     border: none;
     padding: 0;
     margin: 0;
-    background: transparent;
-    opacity: 0.01;
+    border-radius: 50%;
+    background: rgba(51, 51, 51, 0.92);
+    color: white;
+    font-size: 22px;
+    font-weight: 800;
     z-index: 2000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
 }
 
 .cache-reset-btn:active {
-    opacity: 0.08;
+    transform: scale(0.96);
 }
 
 /* Массовый поиск ГМ */
