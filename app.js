@@ -15,30 +15,22 @@ const CONFIG = {
 
 // === МАССОВЫЙ ПОИСК ГМ ===
 function openBulkCitySelection() {
-  citySelectionScreen.classList.remove('active');
-  searchScreen.classList.remove('active');
-  bulkSearchScreen.classList.remove('active');
-  bulkCitySelectionScreen.classList.add('active');
+  pushNavState({ screen: 'bulkCitySelection' });
 }
 
 function bulkGoBackToMain() {
-  bulkCitySelectionScreen.classList.remove('active');
-  bulkSearchScreen.classList.remove('active');
-  searchScreen.classList.remove('active');
-  citySelectionScreen.classList.add('active');
+  history.back();
 }
 
 function bulkGoBackToCitySelection() {
-  bulkSearchScreen.classList.remove('active');
-  bulkCitySelectionScreen.classList.add('active');
+  history.back();
 }
 
 function selectBulkCity(cityCode, cityName) {
   bulkCity = cityCode;
   bulkCityName = cityName;
   bulkCurrentCityElement.textContent = `РЦ: ${cityName}`;
-  bulkCitySelectionScreen.classList.remove('active');
-  bulkSearchScreen.classList.add('active');
+  pushNavState({ screen: 'bulkSearch', cityCode, cityName });
   if (cityCode === 'ALL') {
     bulkResultText.innerHTML = `📦 Массовый поиск: <strong>ВСЕ РЦ</strong><br><br>
                                 Поиск по всем городам займет больше времени.<br>
@@ -191,13 +183,41 @@ const bulkLoadingElement = document.getElementById('bulkLoading');
 let bulkCity = null;
 let bulkCityName = null;
 
+// === НАВИГАЦИЯ (HISTORY API) ===
+function applyNavState(state) {
+  const screen = state && state.screen ? state.screen : 'main';
+
+  citySelectionScreen.classList.toggle('active', screen === 'main');
+  searchScreen.classList.toggle('active', screen === 'search');
+  bulkCitySelectionScreen.classList.toggle('active', screen === 'bulkCitySelection');
+  bulkSearchScreen.classList.toggle('active', screen === 'bulkSearch');
+
+  if (screen === 'search') {
+    currentCity = state.cityCode || currentCity;
+    currentCityName = state.cityName || currentCityName;
+    currentCityElement.textContent = `РЦ: ${currentCityName}`;
+  }
+
+  if (screen === 'bulkSearch') {
+    bulkCity = state.cityCode || bulkCity;
+    bulkCityName = state.cityName || bulkCityName;
+    if (bulkCityName) {
+      bulkCurrentCityElement.textContent = `РЦ: ${bulkCityName}`;
+    }
+  }
+}
+
+function pushNavState(state) {
+  history.pushState(state, '');
+  applyNavState(state);
+}
+
 // === ВЫБОР ГОРОДА ===
 function selectCity(cityCode, cityName) {
   currentCity = cityCode;
   currentCityName = cityName;
   currentCityElement.textContent = `РЦ: ${cityName}`;
-  citySelectionScreen.classList.remove('active');
-  searchScreen.classList.add('active');
+  pushNavState({ screen: 'search', cityCode, cityName });
   if (cityCode === 'ALL') {
     resultText.innerHTML = `🔍 Поиск по <strong>ВСЕМ РЦ</strong><br><br>
                             Это может занять немного больше времени (до 10-15 сек).<br>
@@ -216,8 +236,7 @@ function selectCity(cityCode, cityName) {
 
 // === НАЗАД К ВЫБОРУ ГОРОДА ===
 function goBack() {
-  searchScreen.classList.remove('active');
-  citySelectionScreen.classList.add('active');
+  history.back();
 }
 
 // === ПОИСК ГМ ===
@@ -367,5 +386,16 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(() => console.log('✅ Service Worker зарегистрирован'))
       .catch(err => console.error('❌ Ошибка Service Worker:', err));
   }
+
+  // Базовое состояние навигации, чтобы системная кнопка "Назад" работала внутри PWA
+  if (!history.state || !history.state.screen) {
+    history.replaceState({ screen: 'main' }, '');
+  }
+  applyNavState(history.state);
+
+  window.addEventListener('popstate', (e) => {
+    applyNavState(e.state);
+  });
+
   gmInput.focus();
 });
