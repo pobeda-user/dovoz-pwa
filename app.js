@@ -10,7 +10,152 @@ const CONFIG = {
     "NBCH": "1a6pwlwjnmdl3U43JeLBDqmVBKepJfy-RsUKE8e7GxE0",
     "VLG": "1a8Q2fNaIMNUnctpktbnu_I9GgKCzWW_S4wf39QGpc-M"
   }
+
 };
+
+// === МАССОВЫЙ ПОИСК ГМ ===
+function openBulkCitySelection() {
+  citySelectionScreen.classList.remove('active');
+  searchScreen.classList.remove('active');
+  bulkSearchScreen.classList.remove('active');
+  bulkCitySelectionScreen.classList.add('active');
+}
+
+function bulkGoBackToMain() {
+  bulkCitySelectionScreen.classList.remove('active');
+  bulkSearchScreen.classList.remove('active');
+  searchScreen.classList.remove('active');
+  citySelectionScreen.classList.add('active');
+}
+
+function bulkGoBackToCitySelection() {
+  bulkSearchScreen.classList.remove('active');
+  bulkCitySelectionScreen.classList.add('active');
+}
+
+function selectBulkCity(cityCode, cityName) {
+  bulkCity = cityCode;
+  bulkCityName = cityName;
+  bulkCurrentCityElement.textContent = `РЦ: ${cityName}`;
+  bulkCitySelectionScreen.classList.remove('active');
+  bulkSearchScreen.classList.add('active');
+  bulkResultText.innerHTML = `📦 Массовый поиск ГМ: <strong>${cityName}</strong><br><br>
+                              Вставьте до 10 номеров (Enter/запятая)<br>
+                              или заполните поля ниже.<br><br>
+                              <small>Только цифры</small>`;
+  showToast(`Выбран РЦ: ${cityName}`);
+}
+
+function parseBulkGmListFromUi() {
+  const fromTextarea = (bulkGmTextarea.value || '')
+    .split(/[\n,]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const fromFields = bulkGmInputs
+    .map(i => (i.value || '').trim())
+    .filter(Boolean);
+
+  const merged = [];
+  const seen = new Set();
+  for (const v of [...fromTextarea, ...fromFields]) {
+    if (seen.has(v)) continue;
+    seen.add(v);
+    merged.push(v);
+  }
+
+  return merged.slice(0, 10);
+}
+
+function showBulkLoading(show) {
+  bulkLoadingElement.classList.toggle('active', show);
+}
+
+async function fetchGm(city, gm) {
+  const params = new URLSearchParams({ gm, text: gm, city });
+  const url = `${CONFIG.API_URL}?${params.toString()}`;
+  const response = await fetch(url, { method: 'GET' });
+  return response.json();
+}
+
+function renderBulkResultItem(gm, data) {
+  if (!data || !data.ok) {
+    return `
+      <div class="bulk-result-item error">
+        <div class="bulk-result-title">❌ ГМ: ${gm}</div>
+        <div class="bulk-result-body">Ошибка: ${(data && data.error) ? data.error : 'Неизвестная ошибка'}</div>
+      </div>
+    `;
+  }
+
+  const res = data.result || {};
+
+  if (!res.found && res.correctCity) {
+    return `
+      <div class="bulk-result-item wrong">
+        <div class="bulk-result-title">⚠️ ГМ: ${gm}</div>
+        <div class="bulk-result-body">${formatText(res.text || '')}</div>
+        <button class="switch-city-btn" onclick="bulkSwitchCityAndSearch('${res.correctCity}', '${res.correctCityName}', '${gm}')">
+          <span class="material-icons">swap_horiz</span>
+          ПЕРЕЙТИ В РЦ ${String(res.correctCityName || '').toUpperCase()}
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="bulk-result-item ${res.found ? 'ok' : 'nf'}">
+      <div class="bulk-result-title">${res.found ? '✅' : '😔'} ГМ: ${gm}</div>
+      <div class="bulk-result-body">${formatText(res.text || '')}</div>
+    </div>
+  `;
+}
+
+async function bulkSearchGm() {
+  if (!bulkCity || !bulkCityName) {
+    showToast('Сначала выберите РЦ');
+    return;
+  }
+
+  const gmList = parseBulkGmListFromUi();
+  if (!gmList.length) {
+    showToast('Введите хотя бы один номер ГМ');
+    return;
+  }
+
+  const bad = gmList.find(x => !/^\d+$/.test(x));
+  if (bad) {
+    showToast(`ГМ должен содержать только цифры: ${bad}`);
+    return;
+  }
+
+  showBulkLoading(true);
+  bulkResultText.innerHTML = `⏳ Ищем в базе данных...<br><br><small>РЦ: ${bulkCityName}</small>`;
+
+  try {
+    const results = [];
+    for (const gm of gmList) {
+      try {
+        const r = await fetchGm(bulkCity, gm);
+        results.push({ gm, r });
+      } catch (e) {
+        results.push({ gm, r: { ok: false, error: e.message } });
+      }
+    }
+
+    const html = results.map(x => renderBulkResultItem(x.gm, x.r)).join('');
+    bulkResultText.innerHTML = html || 'Нет результатов';
+  } finally {
+    showBulkLoading(false);
+  }
+}
+
+function bulkSwitchCityAndSearch(cityCode, cityName, gm) {
+  selectBulkCity(cityCode, cityName);
+  bulkGmTextarea.value = gm;
+  bulkGmInputs.forEach(i => (i.value = ''));
+  bulkSearchGm();
+}
 
 // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
 let currentCity = "ULN";
@@ -26,6 +171,18 @@ const loadingElement = document.getElementById('loading');
 const helpModal = document.getElementById('helpModal');
 const helpContent = document.getElementById('helpContent');
 const toast = document.getElementById('toast');
+
+// === DOM ЭЛЕМЕНТЫ (МАССОВЫЙ ПОИСК) ===
+const bulkCitySelectionScreen = document.getElementById('bulkCitySelection');
+const bulkSearchScreen = document.getElementById('bulkSearchScreen');
+const bulkCurrentCityElement = document.getElementById('bulkCurrentCity');
+const bulkGmTextarea = document.getElementById('bulkGmTextarea');
+const bulkGmInputs = Array.from(document.querySelectorAll('.bulk-gm'));
+const bulkResultText = document.getElementById('bulkResultText');
+const bulkLoadingElement = document.getElementById('bulkLoading');
+
+let bulkCity = null;
+let bulkCityName = null;
 
 // === ВЫБОР ГОРОДА ===
 function selectCity(cityCode, cityName) {
@@ -173,6 +330,20 @@ gmInput.addEventListener('keypress', (e) => {
 helpModal.addEventListener('click', (e) => {
   if (e.target === helpModal) closeHelp();
 });
+
+if (bulkGmTextarea) {
+  bulkGmTextarea.addEventListener('blur', () => {
+    const list = (bulkGmTextarea.value || '')
+      .split(/[\n,]+/)
+      .map(s => s.trim())
+      .filter(Boolean)
+      .slice(0, 10);
+
+    bulkGmInputs.forEach((input, idx) => {
+      input.value = list[idx] || '';
+    });
+  });
+}
 
 // === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {

@@ -56,6 +56,13 @@
                     <span class="city-code">(ГМ: 8)</span>
                 </button>
             </div>
+
+            <div class="bulk-entry">
+                <button class="city-btn bulk" onclick="openBulkCitySelection()">
+                    <span class="city-name">МАССОВЫЙ ПОИСК ГМ</span>
+                    <span class="city-code">(до 10 номеров • через Enter или запятую)</span>
+                </button>
+            </div>
             
             <div class="info-box">
                 <p>📱 <strong>Установите это приложение:</strong></p>
@@ -110,6 +117,119 @@
             </div>
 
             <!-- Информация о приложении -->
+            <div class="app-info">
+                <p>⚡ PWA приложение • Работает на всех устройствах</p>
+                <p>📱 Установите на iPhone/Android как обычное приложение</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран выбора города для массового поиска -->
+    <div id="bulkCitySelection" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="bulkGoBackToMain()">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <h2>📦 Массовый поиск ГМ</h2>
+                <span style="width:40px"></span>
+            </div>
+
+            <p class="subtitle">Выберите РЦ, где искать:</p>
+
+            <div class="city-buttons">
+                <button class="city-btn green" onclick="selectBulkCity('ULN', 'Ульяновск')">
+                    <span class="city-name">УЛЬЯНОВСК</span>
+                    <span class="city-code">(ГМ: 1,2,4,9)</span>
+                </button>
+
+                <button class="city-btn blue" onclick="selectBulkCity('VRN', 'Воронеж')">
+                    <span class="city-name">ВОРОНЕЖ</span>
+                    <span class="city-code">(ГМ: 5)</span>
+                </button>
+
+                <button class="city-btn orange" onclick="selectBulkCity('SMR', 'Самара')">
+                    <span class="city-name">САМАРА</span>
+                    <span class="city-code">(ГМ: 6)</span>
+                </button>
+
+                <button class="city-btn purple" onclick="selectBulkCity('KRD', 'Краснодар')">
+                    <span class="city-name">КРАСНОДАР</span>
+                    <span class="city-code">(ГМ: 3)</span>
+                </button>
+
+                <button class="city-btn brown" onclick="selectBulkCity('NBCH', 'Набережные Челны')">
+                    <span class="city-name">НАБЕРЕЖНЫЕ ЧЕЛНЫ</span>
+                    <span class="city-code">(ГМ: 7)</span>
+                </button>
+
+                <button class="city-btn gray" onclick="selectBulkCity('VLG', 'Волгоград')">
+                    <span class="city-name">ВОЛГОГРАД</span>
+                    <span class="city-code">(ГМ: 8)</span>
+                </button>
+            </div>
+
+            <div class="info-box">
+                <p>🧾 <strong>Как вводить:</strong></p>
+                <p>- Каждый ГМ с новой строки</p>
+                <p>- Или через запятую</p>
+                <p>- Максимум 10 ГМ за один поиск</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран массового поиска -->
+    <div id="bulkSearchScreen" class="screen">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="bulkGoBackToCitySelection()">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <h2 id="bulkCurrentCity">РЦ: Ульяновск</h2>
+                <span style="width:40px"></span>
+            </div>
+
+            <div class="bulk-textarea-group">
+                <label for="bulkGmTextarea" class="bulk-label">🧩 Вставьте список ГМ (до 10):</label>
+                <textarea id="bulkGmTextarea" rows="5" placeholder="Например:\n113472566\n113476229\n112472979"></textarea>
+            </div>
+
+            <div class="bulk-fields">
+                <div class="bulk-fields-title">✍️ Или заполните поля по одному:</div>
+                <div class="bulk-fields-grid">
+                    <input class="bulk-gm" data-idx="0" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #1">
+                    <input class="bulk-gm" data-idx="1" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #2">
+                    <input class="bulk-gm" data-idx="2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #3">
+                    <input class="bulk-gm" data-idx="3" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #4">
+                    <input class="bulk-gm" data-idx="4" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #5">
+                    <input class="bulk-gm" data-idx="5" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #6">
+                    <input class="bulk-gm" data-idx="6" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #7">
+                    <input class="bulk-gm" data-idx="7" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #8">
+                    <input class="bulk-gm" data-idx="8" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #9">
+                    <input class="bulk-gm" data-idx="9" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ГМ #10">
+                </div>
+            </div>
+
+            <button class="search-btn bulk-search-btn" onclick="bulkSearchGm()">
+                <span class="material-icons">search</span>
+                НАЙТИ
+            </button>
+
+            <div class="result-container">
+                <div id="bulkResultText">
+                    📦 Массовый поиск ГМ<br><br>
+                    1. Выберите РЦ<br>
+                    2. Вставьте до 10 номеров (Enter/запятая)<br>
+                    3. Нажмите «Найти»<br><br>
+                    <small>Поддерживается ввод только цифр</small>
+                </div>
+            </div>
+
+            <div id="bulkLoading" class="loading">
+                <div class="spinner"></div>
+                <p>Ищем в базе данных...</p>
+            </div>
+
             <div class="app-info">
                 <p>⚡ PWA приложение • Работает на всех устройствах</p>
                 <p>📱 Установите на iPhone/Android как обычное приложение</p>
