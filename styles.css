@@ -91,6 +91,16 @@ h1 {
     opacity: 0.9;
 }
 
+.all-rc { 
+    background: linear-gradient(135deg, #8b0000, #4a0000); 
+    margin-bottom: 20px;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.all-rc:hover {
+    background: linear-gradient(135deg, #a00000, #5a0000);
+}
+
 /* Цвета кнопок */
 .green { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
 .blue { background: linear-gradient(135deg, #2196F3, #1565C0); }
