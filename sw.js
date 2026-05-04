@@ -1,14 +1,15 @@
-const CACHE_NAME = 'dovoz-pwa-v2'; // ← Изменено имя кэша для сброса старого
+const CACHE_NAME = 'dovoz-pwa-v3'; // Обновили версию
 
 const CACHE_URLS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/pwa.js',
-  '/manifest.json',
-  '/icons/icon-144.png',
-  '/icons/icon-192.png'
+  './',
+  'index.html',
+  'styles.css',
+  'app.js',
+  'pwa.js',
+  'manifest.json',
+  'icons/icon-144.png',
+  'icons/icon-192.png',
+  'icons/icon-512.png'
 ];
 
 // УСТАНОВКА

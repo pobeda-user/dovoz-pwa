@@ -2,7 +2,7 @@
   "name": "Поиск довозов РЦ",
   "short_name": "Довозы",
   "description": "Приложение для поиска довозов по всем Распределительным Центрам",
-  "start_url": "/",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
@@ -18,25 +18,30 @@
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "categories": ["business", "productivity"],
   "lang": "ru",
   "dir": "ltr",
-  "scope": "/",
+  "scope": ".",
   "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Поиск Ульяновск",
       "short_name": "УЛН",
       "description": "Поиск довозов Ульяновска",
-      "url": "/?city=ULN"
+      "url": "index.html?city=ULN"
     },
     {
       "name": "Поиск Воронеж",
       "short_name": "ВРН",
       "description": "Поиск довозов Воронежа",
-      "url": "/?city=VRN"
+      "url": "index.html?city=VRN"
     }
   ]
 }
